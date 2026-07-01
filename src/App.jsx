@@ -1,45 +1,240 @@
-function app() {
-const name="Birds";
-let num1 = 56;
-let num2 = 32;
-let num = num1+num2;
-let age=18;
-let userage=20;
-  return (
-    <>
-    
-    <h1 style={{color:"blue"}}>Page for {name}</h1>
-    <div style={{display:"flex"}}>
-    <img style={{width:280}} 
-    src="https://i.pinimg.com/736x/2c/ac/9d/2cac9d42e812611f0cd707b2bcb09ad8.jpg" 
-    alt="Birds" />
-    <p className="Avian">Birds are a group of warm-blooded vertebrate animals constituting the class Aves,
-       characterised by feathers, toothless beaked jaws, 
-       the laying of hard-shelled eggs, a high metabolic rate,
-        a four-chambered heart, and a strong yet lightweight skeleton.
-         Birds live worldwide and range in size from the 5.5 cm (2.2 in) bee hummingbird
-      to the 2.8 m (9 ft 2 in) common ostrich.
-       There are over 11,000 living species and they are split into <b>{num} orders</b>.
-        More than half are passerine or "perching" birds. 
-        Birds have wings whose development varies according to species;
-  the only known groups without wings are the extinct moa and elephant birds.
-  Wings, which are modified forelimbs, gave birds the ability to fly, 
-  although further evolution has led to the loss of flight in some birds,
-  including ratites, penguins, and diverse endemic island species.
-  The digestive and respiratory systems of birds are also uniquely adapted for flight.
-  Some bird species of aquatic environments,
-  particularly seabirds and some waterbirds, 
-  have further evolved for swimming.
-   The study of birds is called ornithology.</p>
-    </div>
-    {
-      (userage>age)?<p>User Logged IN</p>:
-      <p>Invalid Age</p>
+import React, { useState } from "react";
+
+function App() {
+  const [page, setPage] = useState("home");
+
+  const [user, setUser] = useState({
+    name: "",
+    vehicle: "",
+  });
+
+  const [location, setLocation] = useState("");
+  const [slot, setSlot] = useState("");
+
+  const slots = ["A1", "A2", "B1", "B2", "C1"];
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setLocation(
+            `Latitude: ${position.coords.latitude.toFixed(
+              4
+            )}, Longitude: ${position.coords.longitude.toFixed(4)}`
+          );
+        },
+        () => {
+          alert("Location access denied");
+        }
+      );
     }
-    <button onDoubleClick={()=>{
-  alert("Warning⚠️")
-}} style={{width:"fit-content"}}>Danger</button>
-    </>
+  };
+
+  const containerStyle = {
+    maxWidth: "600px",
+    margin: "30px auto",
+    padding: "20px",
+    border: "1px solid #ddd",
+    borderRadius: "10px",
+    textAlign: "center",
+  };
+
+  const buttonStyle = {
+    padding: "10px 20px",
+    margin: "10px",
+    cursor: "pointer",
+  };
+
+  return (
+    <div style={containerStyle}>
+      {page === "home" && (
+        <>
+          <h1>🚗 Smart Parking Management System</h1>
+          <p>Welcome to Smart City Parking Service</p>
+
+          <button
+            style={buttonStyle}
+            onClick={() => setPage("register")}
+          >
+            Start Booking
+          </button>
+        </>
+      )}
+
+      {page === "register" && (
+        <>
+          <h2>Vehicle Registration</h2>
+
+          <input
+            type="text"
+            placeholder="Owner Name"
+            value={user.name}
+            onChange={(e) =>
+              setUser({ ...user, name: e.target.value })
+            }
+          />
+
+          <br />
+          <br />
+
+          <input
+            type="text"
+            placeholder="Vehicle Number"
+            value={user.vehicle}
+            onChange={(e) =>
+              setUser({ ...user, vehicle: e.target.value })
+            }
+          />
+
+          <br />
+          <br />
+
+          <button
+            style={buttonStyle}
+            onClick={() => setPage("gps")}
+          >
+            Continue
+          </button>
+        </>
+      )}
+
+      {page === "gps" && (
+        <>
+          <h2>📍 GPS Location</h2>
+
+          <button style={buttonStyle} onClick={getLocation}>
+            Detect My Location
+          </button>
+
+          <p>{location}</p>
+
+          <button
+            style={buttonStyle}
+            onClick={() => setPage("parking")}
+          >
+            Find Parking
+          </button>
+        </>
+      )}
+
+      {page === "parking" && (
+        <>
+          <h2>Available Parking Slots</h2>
+
+          {slots.map((s) => (
+            <button
+              key={s}
+              style={{
+                ...buttonStyle,
+                backgroundColor:
+                  slot === s ? "lightgreen" : "white",
+              }}
+              onClick={() => setSlot(s)}
+            >
+              {s}
+            </button>
+          ))}
+
+          <br />
+
+          <button
+            style={buttonStyle}
+            onClick={() => setPage("booking")}
+          >
+            Book Selected Slot
+          </button>
+        </>
+      )}
+
+      {page === "booking" && (
+        <>
+          <h2>Booking Confirmation</h2>
+
+          <p>
+            <strong>Name:</strong> {user.name}
+          </p>
+
+          <p>
+            <strong>Vehicle:</strong> {user.vehicle}
+          </p>
+
+          <p>
+            <strong>Slot:</strong> {slot}
+          </p>
+
+          <button
+            style={buttonStyle}
+            onClick={() => setPage("payment")}
+          >
+            Proceed To Payment
+          </button>
+        </>
+      )}
+
+      {page === "payment" && (
+        <>
+          <h2>💳 Payment</h2>
+
+          <h3>Parking Charge: ₹50</h3>
+
+          <button
+            style={buttonStyle}
+            onClick={() => setPage("ticket")}
+          >
+            Pay Now
+          </button>
+        </>
+      )}
+
+      {page === "ticket" && (
+        <>
+          <h2>🎫 Parking Ticket</h2>
+
+          <p>
+            <strong>Owner:</strong> {user.name}
+          </p>
+
+          <p>
+            <strong>Vehicle:</strong> {user.vehicle}
+          </p>
+
+          <p>
+            <strong>Parking Slot:</strong> {slot}
+          </p>
+
+          <p>
+            <strong>Status:</strong> Confirmed ✅
+          </p>
+
+          <button
+            style={buttonStyle}
+            onClick={() => setPage("thankyou")}
+          >
+            Finish
+          </button>
+        </>
+      )}
+
+      {page === "thankyou" && (
+        <>
+          <h1>🎉 Booking Successful</h1>
+
+          <h2>Thank You For Choosing Us</h2>
+
+          <p>Your parking slot has been reserved.</p>
+
+          <p>Safe Journey 🚗</p>
+
+          <button
+            style={buttonStyle}
+            onClick={() => window.location.reload()}
+          >
+            New Booking
+          </button>
+        </>
+      )}
+    </div>
   );
 }
-export default app;
+
+export default App;
